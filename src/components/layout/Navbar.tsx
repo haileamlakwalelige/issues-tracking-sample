@@ -11,18 +11,26 @@ const Navbar = async () => {
       <div className="flex justify-between items-center p-4 py-8 bg-white shadow-sm shadow-gray-300">
         <Link href="/">
           {" "}
-          <div className="font-semibold text-4xl font-serif">LoGo</div>
+          <div className="font-semibold text-4xl font-serif">Zagol</div>
         </Link>
         <div>
           {session?.user ? (
             <UserNavbarButton />
           ) : (
-            <Link
-              href={"/sign-in"}
-              className="text-lg font-semibold bg-black rounded-lg px-12 py-4  text-white hover:text-slate-800 hover:bg-white  hover:border-black hover:border-[1px]"
-            >
-              Sign In
-            </Link>
+            <div className="flex gap-2 items-center justify-center">
+              <Link
+                href={"/sign-in"}
+                className="text-lg font-semibold bg-black rounded-lg px-12 text-center  py-2  text-white hover:text-slate-800 hover:bg-white  hover:border-black hover:border-[1px]"
+              >
+                Sign In
+              </Link>
+              <Link
+                href={"/sign-up"}
+                className="text-lg font-semibold bg-black rounded-lg px-12 text-center  py-2  text-white hover:text-slate-800 hover:bg-white  hover:border-black hover:border-[1px]"
+              >
+                Sign Up
+              </Link>
+            </div>
           )}
         </div>
       </div>

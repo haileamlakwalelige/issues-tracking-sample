@@ -12,11 +12,11 @@ const UserNavbarButton = () => {
         onClick={() =>
           signOut({
             redirect: true,
-            callbackUrl: `${window.location.origin}/sign-in`,
+            callbackUrl: `/sign-in`,
           })
         }
         variant="destructive"
-        className="text-lg font-semibold h-[50px] px-10"
+        className="text-lg font-semibold h-[45px] px-10 "
       >
         SignOut
       </Button>

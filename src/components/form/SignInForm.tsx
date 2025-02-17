@@ -19,6 +19,8 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "../ui/toast";
+import { FaGithub, FaGoogle } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -32,6 +34,7 @@ const formSchema = z.object({
 const SignInForm = () => {
   const router = useRouter();
   const { toast } = useToast();
+  const { data: sessions } = useSession();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "", password: "" },
@@ -58,6 +61,9 @@ const SignInForm = () => {
 
   return (
     <div className="flex items-center justify-center min-h-[90vh] bg-white p-6">
+      {/* <h1 className="text-red-500 font-bold text-[20px]">
+        {JSON.stringify(sessions)}
+      </h1> */}
       <div
         className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8"
         style={{ height: "auto" }}
@@ -117,6 +123,24 @@ const SignInForm = () => {
             </Link>
           </p>
         </Form>
+        <div className="w-full mt-5 flex items-center justify-center  gap-2">
+          <Button
+            onClick={() =>
+              signIn("google", { callbackUrl: "http://localhost:3000" })
+            }
+            className="w-full bg-white hover:bg-gray-100 text-black font-semibold py-3 px-4 rounded-xl transition-all"
+          >
+            <FaGoogle /> Sign In with Google
+          </Button>
+          <Button
+            onClick={() =>
+              signIn("github", { callbackUrl: "http://localhost:3000" })
+            }
+            className="w-full bg-white hover:bg-gray-100 text-black font-semibold py-3 px-4 rounded-xl transition-all"
+          >
+            <FaGithub /> Sign In with GitHub
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -18,6 +18,8 @@ import { useRouter } from "next/navigation"; // For Next.js App Router
 import Link from "next/link";
 import { ToastAction } from "../ui/toast";
 import { useToast } from "@/hooks/use-toast";
+import { FaGithub, FaGoogle } from "react-icons/fa";
+import { signIn } from "next-auth/react";
 
 const formSchema = z.object({
   fullName: z.string().min(2, {
@@ -150,12 +152,12 @@ const SignUpForm = () => {
                     >
                       <option>Select Role</option>
 
-                      <option
+                      {/* <option
                         value="admin"
                         className="py-2 px-4 hover:bg-gray-100"
                       >
                         Admin
-                      </option>
+                      </option> */}
                       <option
                         value="developer"
                         className="py-2 px-4 hover:bg-gray-100"
@@ -207,6 +209,20 @@ const SignUpForm = () => {
             </Link>
           </p>
         </Form>
+        <div className="w-full mt-5 flex items-center justify-center  gap-2">
+          <Button
+            onClick={() => signIn("google")}
+            className="w-full bg-white hover:bg-gray-100 text-black font-semibold py-3 px-4 rounded-xl transition-all"
+          >
+            <FaGoogle /> Sign Up with Google
+          </Button>
+          <Button
+            onClick={() => signIn("github")}
+            className="w-full bg-white hover:bg-gray-100 text-black font-semibold py-3 px-4 rounded-xl transition-all"
+          >
+            <FaGithub /> Sign Up with GitHub
+          </Button>
+        </div>
       </div>
     </div>
   );

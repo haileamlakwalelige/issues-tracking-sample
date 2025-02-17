@@ -1,6 +1,8 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
 import { db } from "./db";
 import { compare } from "bcrypt";
 
@@ -17,10 +19,15 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  pages: {
-    signIn: "/sign-in",
-  },
   providers: [
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -40,6 +47,10 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        if (!existingUser.password) {
+          return null;
+        }
+
         const passwordMatch = await compare(
           credentials.password,
           existingUser.password
@@ -54,11 +65,14 @@ export const authOptions: NextAuthOptions = {
           email: existingUser.email,
           name: existingUser.name,
           role: existingUser.role,
-          username: existingUser.username,
+          username: existingUser.username || "",
         };
       },
     }),
   ],
+  pages: {
+    signIn: "/sign-in", // Custom sign-in page
+  },
 
   callbacks: {
     async jwt({ token, user }) {
