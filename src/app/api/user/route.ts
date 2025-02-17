@@ -1,12 +1,38 @@
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { hash } from "bcrypt";
+import { getServerSession, Session } from "next-auth";
 import { NextResponse } from "next/server";
 import * as z from "zod";
 
+declare module "next-auth" {
+  interface Session {
+    role?: string;
+  }
+}
+
 export async function GET() {
-  const users = await db.user.findMany()
+  const session = await getServerSession(authOptions); // Assuming this returns the session object
+
+  if (!session || session?.user?.role !== "admin") {
+    return NextResponse.json({
+      message: "Nothing",
+      data: session,
+    });
+  }
+
+  // Fetch users including their 'role'
+  const users = await db.user.findMany({
+    select: {
+      name: true,
+      email: true,
+      role: true, // Make sure to include the 'role'
+    },
+  });
+
   return NextResponse.json({
-    message: "YOU get what you want",
+    message: "You get what you want",
+    data: users,
   });
 }
 
@@ -49,7 +75,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // hash the password for privacy 
+    // hash the password for privacy
     const hashedPassword = await hash(password, 10);
 
     const newUser = await db.user.create({

@@ -12,11 +12,12 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
   id            Int            @id @default(autoincrement())
   email         String         @unique
   name          String?
-  username      String?         @unique
+  username      String?        @unique
   password      String?
   role          String         @default("reporter")
   createdAt     DateTime       @default(now())
@@ -30,7 +31,7 @@ model Issue {
   id          Int       @id @default(autoincrement())
   title       String
   description String
-  category    String?
+  category    String?   @default("BUG")
   assigneeId  Int?
   file        String?
   fileType    String?
@@ -64,6 +65,3 @@ model Notification {
   updatedAt   DateTime @updatedAt
   recipient   User     @relation(fields: [recipientId], references: [id], onDelete: Cascade)
 }
-
-
-

@@ -3,6 +3,7 @@ import React from "react";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import UserNavbarButton from "../ui/UserNavbarButton";
+import { Session } from "inspector/promises";
 
 const Navbar = async () => {
   const session = await getServerSession(authOptions);
@@ -15,7 +16,28 @@ const Navbar = async () => {
         </Link>
         <div>
           {session?.user ? (
-            <UserNavbarButton />
+            <div className="flex gap-2 items-center justify-center">
+              <UserNavbarButton />
+              {session?.user?.role === "admin" ? (
+                <Link href={"/dashboard/admin"}>
+                  <div className="bg-black text-white font-semibold px-5 py-2 rounded">
+                    Admin Dashboard
+                  </div>
+                </Link>
+              ) : session?.user?.role === "developer" ? (
+                <Link href={"/dashboard/developer"}>
+                  <div className="bg-black text-white font-semibold px-5 py-2 rounded">
+                    Developer Dashboard
+                  </div>
+                </Link>
+              ) : (
+                <Link href={"/dashboard/reporter"}>
+                  <div className="bg-black text-white font-semibold px-5 py-2 rounded">
+                    Reporter Dashboard
+                  </div>
+                </Link>
+              )}
+            </div>
           ) : (
             <div className="flex gap-2 items-center justify-center">
               <Link

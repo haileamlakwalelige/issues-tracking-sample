@@ -75,19 +75,31 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
+    // The jwt callback is invoked whenever the JWT is created or updated.
     async jwt({ token, user }) {
-      // Persist the OAuth access_token and or the user id to the token right after signin
       if (user) {
-        return { ...token, username: user.username, role: user.role };
+        console.log("JWT Callback: ", user); // Debugging
+        return {
+          ...token,
+          username: user.username,
+          role: user.role,
+          id: user.id, // Include the user id
+        };
       }
-      return token;
+      return token; // Return token as-is if no user is found
     },
+
+    // The session callback is invoked when the session is fetched on the client.
     async session({ session, token }) {
-      // Send properties to the client, like an access_token and user id from a provider.
+      // Add user details from token to session
       return {
         ...session,
-        username: token.username,
-        role: token.role,
+        user: {
+          ...session.user,
+          username: token.username as string, // Typecast if needed
+          role: token.role as string,
+          id: token.id as string, // Pass the user id to the session object
+        },
       };
     },
   },

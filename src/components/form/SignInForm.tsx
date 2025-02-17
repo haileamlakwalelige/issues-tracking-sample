@@ -54,15 +54,16 @@ const SignInForm = () => {
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
     } else {
+      router.push("/");
       router.refresh();
-      router.push("/dashboard/admin");
     }
   }
 
+  console.log("sessions", sessions);
   return (
     <div className="flex items-center justify-center min-h-[90vh] bg-white p-6">
       {/* <h1 className="text-red-500 font-bold text-[20px]">
-        {JSON.stringify(sessions)}
+        {JSON.stringify(sessions?.user)}
       </h1> */}
       <div
         className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8"
