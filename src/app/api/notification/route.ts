@@ -5,6 +5,7 @@ export async function POST(request: Request) {
   const body = await request.json();
 
   try {
+    // Create the notification
     const newNotification = await db.notification.create({
       data: {
         message: body.message,
@@ -13,10 +14,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(
-      {
-        notification: newNotification,
-        message: "Notification created successfully!",
-      },
+      { notification: newNotification, message: "Notification created successfully!" },
       { status: 201 }
     );
   } catch (error) {
@@ -28,10 +26,13 @@ export async function POST(request: Request) {
   }
 }
 
+
 export async function GET() {
   try {
     const notifications = await db.notification.findMany({
-      include: {
+      select: {
+        id: true,
+        message: true,
         recipient: true,
       },
     });
@@ -45,3 +46,4 @@ export async function GET() {
     );
   }
 }
+

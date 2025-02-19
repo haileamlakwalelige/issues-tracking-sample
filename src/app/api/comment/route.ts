@@ -1,10 +1,13 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
+
+
 export async function POST(request: Request) {
   const body = await request.json();
 
   try {
+    // Create the comment
     const newComment = await db.comment.create({
       data: {
         content: body.content,
@@ -14,6 +17,22 @@ export async function POST(request: Request) {
         issueId: body.issueId,
       },
     });
+
+    // Find the issue to get the assignee
+    const issue = await db.issue.findUnique({
+      where: { id: body.issueId },
+      select: { assigneeId: true },
+    });
+
+    if (issue?.assigneeId) {
+      // Create a notification for the assignee
+      await db.notification.create({
+        data: {
+          message: `New comment on your assigned issue: "${body.content}"`,
+          recipientId: issue.assigneeId,
+        },
+      });
+    }
 
     return NextResponse.json(
       { comment: newComment, message: "Comment created successfully!" },
@@ -27,6 +46,7 @@ export async function POST(request: Request) {
     );
   }
 }
+
 
 export async function GET() {
   try {

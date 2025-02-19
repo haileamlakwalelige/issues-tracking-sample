@@ -24,8 +24,10 @@ export async function GET() {
   // Fetch users including their 'role'
   const users = await db.user.findMany({
     select: {
+      id:true,
       name: true,
       email: true,
+      username: true,
       role: true, // Make sure to include the 'role'
     },
   });

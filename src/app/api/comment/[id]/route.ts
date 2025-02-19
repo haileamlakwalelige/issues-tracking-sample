@@ -39,8 +39,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 // PUT: Update an existing comment
-export async function PUT(request: Request) {
-  const { id, ...body } = await request.json(); // Extract 'id' and other fields
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
+  const { id } = params; // Extract the ID from the URL path (params)
 
   if (!id) {
     return NextResponse.json(
@@ -50,15 +50,22 @@ export async function PUT(request: Request) {
   }
 
   try {
+    // Get the data from the request body
+    const body = await request.json();
+
+    // Prepare data for the update
+    const updatedData: any = {};
+
+    if (body.content) updatedData.content = body.content;
+    if (body.file) updatedData.file = body.file;
+    if (body.fileType) updatedData.fileType = body.fileType;
+    if (body.authorId) updatedData.authorId = body.authorId;
+    if (body.issueId) updatedData.issueId = body.issueId;
+
+    // Update the comment
     const updatedComment = await db.comment.update({
       where: { id: parseInt(id) }, // Ensure 'id' is parsed as an integer
-      data: {
-        content: body.content,
-        file: body.file,
-        fileType: body.fileType,
-        authorId: body.authorId,
-        issueId: body.issueId,
-      },
+      data: updatedData,
     });
 
     return NextResponse.json(

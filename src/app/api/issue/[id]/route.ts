@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 
 // GET: Fetch a specific issue
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url); // Extract the query params from the URL
-  const id = searchParams.get("id"); // Get the 'id' parameter from the query string
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
 
   if (!id) {
     return NextResponse.json(
@@ -14,6 +14,7 @@ export async function GET(request: Request) {
   }
 
   try {
+    // Fetch the issue by its ID
     const issue = await db.issue.findUnique({
       where: { id: parseInt(id) }, // Ensure 'id' is parsed as an integer
       include: {
@@ -22,6 +23,7 @@ export async function GET(request: Request) {
       },
     });
 
+    // Check if the issue was found
     if (!issue) {
       return NextResponse.json(
         { message: "Issue not found" },
@@ -29,6 +31,8 @@ export async function GET(request: Request) {
       );
     }
 
+
+    // Return the found issue
     return NextResponse.json({ issue }, { status: 200 });
   } catch (error) {
     console.error("Error fetching issue", error);
