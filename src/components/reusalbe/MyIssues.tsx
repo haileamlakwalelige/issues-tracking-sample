@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "@/api/api";
 import CreateIssueForm from "@/components/users/admin/CreateIssueForm";
 import { HiDotsVertical } from "react-icons/hi";
+import { useSession } from "next-auth/react";
 
 // Define the shape of an Issue
 interface Issue {
@@ -21,12 +22,12 @@ interface Issue {
   };
 }
 
-function IssuesTable() {
+function MyIssues() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingIssue, setEditingIssue] = useState<Issue | null>(null);
-  const [showButtons, setShowButtons] = useState(false);
+  const { data: session } = useSession();
 
   const categories = ["Bug", "Feature", "Improvement", "Task"];
   const statuses = ["TODO", "IN PROGRESS", "COMPLETED"];
@@ -49,9 +50,7 @@ function IssuesTable() {
   // Function to handle delete
   const handleDelete = (id: number) => {
     setIssues((prevIssues) => prevIssues.filter((issue) => issue.id !== id));
-    api
-      .delete(`/issue/${id}`)
-      .catch((error) => console.error("Error deleting issue:", error));
+    api.delete(`/issue/${id}`).catch((error) => console.error("Error deleting issue:", error));
   };
 
   // Function to handle edit
@@ -64,13 +63,10 @@ function IssuesTable() {
   const handleSaveEdit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingIssue) {
-      api
-        .put(`/issue/${editingIssue.id}`, editingIssue)
+      api.put(`/issue/${editingIssue.id}`, editingIssue)
         .then(() => {
           setIssues((prevIssues) =>
-            prevIssues.map((issue) =>
-              issue.id === editingIssue.id ? editingIssue : issue
-            )
+            prevIssues.map((issue) => (issue.id === editingIssue.id ? editingIssue : issue))
           );
           setIsEditModalOpen(false);
         })
@@ -89,10 +85,7 @@ function IssuesTable() {
     e.dataTransfer.setData("text/plain", id.toString());
   };
 
-  const handleDrop = (
-    e: React.DragEvent<HTMLDivElement>,
-    newStatus: string
-  ) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, newStatus: string) => {
     const id = parseInt(e.dataTransfer.getData("text/plain"), 10);
     const updatedIssues = issues.map((issue) => {
       if (issue.id === id) {
@@ -112,7 +105,6 @@ function IssuesTable() {
         title: issueToUpdate.title,
         description: issueToUpdate.description,
         status: newStatus,
-        // Add any other properties you want to include in the request
         category: issueToUpdate.category,
         priority: issueToUpdate.priority,
         deadline: issueToUpdate.deadline,
@@ -121,15 +113,19 @@ function IssuesTable() {
       };
 
       // Send a PUT request to update the issue status on the server
-      api
-        .put(`http://localhost:3000/api/issue/${id}`, requestData)
+      api.put(`http://localhost:3000/api/issue/${id}`, requestData)
         .catch((error) => console.error("Error updating issue status:", error));
     }
   };
 
+  // Filter issues assigned to the logged-in user
+  const myIssues = issues.filter(
+    (issue) => issue.assignee.username === session?.user?.username
+  );
+
   // Categorize issues by status
   const categorizedIssues = (status: string) =>
-    issues.filter((issue) => issue.status === status);
+    myIssues.filter((issue) => issue.status === status);
 
   return (
     <div>
@@ -346,4 +342,4 @@ function IssuesTable() {
   );
 }
 
-export default IssuesTable;
+export default MyIssues;

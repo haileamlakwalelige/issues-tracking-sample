@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import api from "@/api/api"; // Ensure this points to your Axios setup
+import api from "@/api/api";
 import { useRouter, useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { MoveLeft } from "lucide-react";
-import Image from "next/image";
 
 interface Assignee {
   name: string;
@@ -41,8 +40,9 @@ const Page = () => {
     const fetchIssue = async () => {
       if (!id) return;
 
+      // Update to your API endpoint
       try {
-        const response = await api.get(`/issue?id=${id}`); // Update to your actual API endpoint
+        const response = await api.get(`/issue?id=${id}`);
         setIssue(response.data.issues);
       } catch (error) {
         console.error("Error fetching issue:", error);
@@ -79,7 +79,7 @@ const Page = () => {
 
     const formData = new FormData();
     formData.append("issueId", String(id));
-    formData.append("authorId", String(id)); // Assuming authorId is same as issue ID for now; modify if necessary
+    formData.append("authorId", String(session?.user.id));
     formData.append("content", comment);
     if (file) {
       formData.append("file", file); // Attach file if exists
@@ -151,17 +151,6 @@ const Page = () => {
                   key={comment.id}
                   className="border border-gray-300 p-2 mb-2"
                 >
-                  {/* {comment.file && (
-                    <div className="mb-2">
-                      <Image
-                        src={comment?.file}
-                        alt="comment attachment"
-                        width={100}
-                        height={100}
-                        className="w-32 h-32 object-cover"
-                      />
-                    </div>
-                  )} */}
                   <p>{comment.content}</p>
                 </div>
               ))

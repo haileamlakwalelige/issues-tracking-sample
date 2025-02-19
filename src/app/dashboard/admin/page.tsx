@@ -14,6 +14,10 @@ import AdminDashboard from "@/components/users/admin/AdminDashboard";
 import { signOut, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import IssuesTable from "@/components/users/admin/IssuesTable";
+import UserTable from "@/components/users/admin/UserTable";
+import NotificationTable from "@/components/users/admin/NotificationTable";
+import CommentTable from "@/components/users/admin/CommentTable";
+import EditProfile from "@/components/reusalbe/EditProfile";
 
 export default function Page() {
   const { data: session, status } = useSession();
@@ -53,23 +57,31 @@ export default function Page() {
     {
       title: "Users",
       icon: Inbox,
-      component: () => <div>Users Component</div>,
+      component: () => (
+        <div>
+          <UserTable />
+        </div>
+      ),
     },
     {
       title: "Notifications",
       icon: Calendar,
-      component: () => <div>Notifications Component</div>,
+      component: () => (
+        <div>
+          <NotificationTable />
+        </div>
+      ),
     },
     {
       title: "Comments",
       icon: Search,
-      component: () => <div>Comments Component</div>,
+      component: () => <div><CommentTable /></div>,
     },
     {
       title: "Settings",
       icon: Settings,
+      component: () => <div><EditProfile /></div>,
       dropdown: [
-        { title: "Edit Profile", onClick: () => alert("Edit Profile clicked") },
         {
           title: "Logout",
           onClick: () =>

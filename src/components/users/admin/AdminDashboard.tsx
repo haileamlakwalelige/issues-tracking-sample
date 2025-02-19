@@ -43,6 +43,8 @@ function AdminDashboard({ setActive }: AdminDashboardProps) {
     fetchData();
   }, []);
 
+  console.log('data of the admin', data);
+
   const combinedChartData = [
     { name: "Issues", value: data?.issues?.issues?.length, color: "#FF6347" },
     { name: "Users", value: data?.users?.data?.length, color: "#4682B4" },

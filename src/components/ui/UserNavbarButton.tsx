@@ -16,7 +16,7 @@ const UserNavbarButton = () => {
           })
         }
         variant="destructive"
-        className="text-lg font-semibold h-[45px] px-10 "
+        className="text-lg font-semibold bg-red-400 rounded h-[45px] px-10 "
       >
         SignOut
       </Button>

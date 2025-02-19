@@ -18,6 +18,11 @@ const Navbar = async () => {
           {session?.user ? (
             <div className="flex gap-2 items-center justify-center">
               <UserNavbarButton />
+              <Link href={"/issues"}>
+                <p className="bg-black text-white font-semibold px-5 py-2 rounded">
+                  Issues
+                </p>
+              </Link>
               {session?.user?.role === "admin" ? (
                 <Link href={"/dashboard/admin"}>
                   <div className="bg-black text-white font-semibold px-5 py-2 rounded">
